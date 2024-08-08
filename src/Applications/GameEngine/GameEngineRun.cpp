@@ -20,6 +20,7 @@
 #include "ImGui/AssetExplorer/AssetExplorer.hpp"
 #include "ImGui/MainMenuBar/MainMenuBar.hpp"
 #include "ImGui/SceneExplorer/SceneExplorer.hpp"
+#include "ImGui/Logger/Logger.hpp"
 
 #include "SceneEditor/SceneEditor.hpp"
 #include "GameScene/GameScene.hpp"
@@ -75,6 +76,10 @@ void GameEngine::loop() {
     MainMenuBar   mainMenuBar;
     AssetExplorer assetExplorer;
     SceneExplorer sceneExplorer;
+    Logger        logger;
+
+    logger.logInfo("Hello world!");
+    logger.logInfo("Hello world 2!");
 
     auto gameScene = std::make_shared<GameScene>("My Scene");
     sceneExplorer.setScene(gameScene);
@@ -115,8 +120,8 @@ void GameEngine::loop() {
 
         assetExplorer.render(extraFlags);
         sceneExplorer.render(extraFlags);
-
         sceneEditor.render(extraFlags, window, deltaTime);
+        logger.render(extraFlags);
 
         ImGui::ShowDemoWindow();
         

@@ -7,7 +7,7 @@
 
 #include <thread>
 
-class MyApp : public App {
+class GameEngine : public App {
 private:
     // Thread state do not modify pls thx
     GLFWwindow* window;
@@ -20,8 +20,8 @@ private:
 
     void runGame();
 public:
-    MyApp();
-    ~MyApp();
+    GameEngine();
+    ~GameEngine();
 
     void start();
     void join();

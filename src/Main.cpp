@@ -1,7 +1,7 @@
-#include "Applications/MyApp/MyApp.hpp"
+#include "Applications/GameEngine/GameEngine.hpp"
 
 int main() {
-    auto game = std::make_unique<MyApp>();
+    auto game = std::make_unique<GameEngine>();
     game->start();
     game->join();
 

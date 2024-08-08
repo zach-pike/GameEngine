@@ -1,4 +1,4 @@
-#include "MyApp.hpp"
+#include "GameEngine.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -99,7 +99,7 @@ static glm::vec3 cubeColorData[] = {
 	glm::vec3(0.982f,  0.099f,  0.879f)
 };
 
-void MyApp::init() {
+void GameEngine::init() {
     if (!glfwInit()) {
         std::cout << "Failed to init GLFW!\n";
         std::exit(1);
@@ -133,7 +133,7 @@ void MyApp::init() {
     printf("Vendor: %s\nRenderer: %s\n", vendor, renderer);
 }
 
-void MyApp::loop() {
+void GameEngine::loop() {
     // VAO
     VertexArray vao;
     vao.bindVertexArray();
@@ -224,7 +224,7 @@ void MyApp::loop() {
     } 
 }
 
-void MyApp::cleanup() {
+void GameEngine::cleanup() {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
@@ -232,7 +232,7 @@ void MyApp::cleanup() {
     glfwTerminate();
 }
 
-void MyApp::runGame() {
+void GameEngine::runGame() {
     init();
     loop();
     cleanup();

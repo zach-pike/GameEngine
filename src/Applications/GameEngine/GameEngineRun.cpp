@@ -21,90 +21,12 @@
 #include "ImGui/MainMenuBar/MainMenuBar.hpp"
 #include "ImGui/SceneExplorer/SceneExplorer.hpp"
 
-#include "Viewport/Viewport.hpp"
+#include "SceneEditor/SceneEditor.hpp"
 #include "GameScene/GameScene.hpp"
 
 #include <iostream>
 #include <exception>
 #include <functional>
-
-static glm::vec3 cubeVertexData[] = {
-    glm::vec3(-1.0f,-1.0f,-1.0f),
-	glm::vec3(-1.0f,-1.0f, 1.0f),
-	glm::vec3(-1.0f, 1.0f, 1.0f),
-	glm::vec3( 1.0f, 1.0f,-1.0f),
-	glm::vec3(-1.0f,-1.0f,-1.0f),
-	glm::vec3(-1.0f, 1.0f,-1.0f),
-	glm::vec3( 1.0f,-1.0f, 1.0f),
-	glm::vec3(-1.0f,-1.0f,-1.0f),
-	glm::vec3( 1.0f,-1.0f,-1.0f),
-	glm::vec3( 1.0f, 1.0f,-1.0f),
-	glm::vec3( 1.0f,-1.0f,-1.0f),
-	glm::vec3(-1.0f,-1.0f,-1.0f),
-	glm::vec3(-1.0f,-1.0f,-1.0f),
-	glm::vec3(-1.0f, 1.0f, 1.0f),
-	glm::vec3(-1.0f, 1.0f,-1.0f),
-	glm::vec3( 1.0f,-1.0f, 1.0f),
-	glm::vec3(-1.0f,-1.0f, 1.0f),
-	glm::vec3(-1.0f,-1.0f,-1.0f),
-	glm::vec3(-1.0f, 1.0f, 1.0f),
-	glm::vec3(-1.0f,-1.0f, 1.0f),
-	glm::vec3( 1.0f,-1.0f, 1.0f),
-	glm::vec3( 1.0f, 1.0f, 1.0f),
-	glm::vec3( 1.0f,-1.0f,-1.0f),
-	glm::vec3( 1.0f, 1.0f,-1.0f),
-	glm::vec3( 1.0f,-1.0f,-1.0f),
-	glm::vec3( 1.0f, 1.0f, 1.0f),
-	glm::vec3( 1.0f,-1.0f, 1.0f),
-	glm::vec3( 1.0f, 1.0f, 1.0f),
-	glm::vec3( 1.0f, 1.0f,-1.0f),
-	glm::vec3(-1.0f, 1.0f,-1.0f),
-	glm::vec3( 1.0f, 1.0f, 1.0f),
-	glm::vec3(-1.0f, 1.0f,-1.0f),
-	glm::vec3(-1.0f, 1.0f, 1.0f),
-	glm::vec3( 1.0f, 1.0f, 1.0f),
-	glm::vec3(-1.0f, 1.0f, 1.0f),
-	glm::vec3( 1.0f,-1.0f, 1.0f)
-};
-
-static glm::vec3 cubeColorData[] = {
-    glm::vec3(0.583f,  0.771f,  0.014f),
-	glm::vec3(0.609f,  0.115f,  0.436f),
-	glm::vec3(0.327f,  0.483f,  0.844f),
-	glm::vec3(0.822f,  0.569f,  0.201f),
-	glm::vec3(0.435f,  0.602f,  0.223f),
-	glm::vec3(0.310f,  0.747f,  0.185f),
-	glm::vec3(0.597f,  0.770f,  0.761f),
-	glm::vec3(0.559f,  0.436f,  0.730f),
-	glm::vec3(0.359f,  0.583f,  0.152f),
-	glm::vec3(0.483f,  0.596f,  0.789f),
-	glm::vec3(0.559f,  0.861f,  0.639f),
-	glm::vec3(0.195f,  0.548f,  0.859f),
-	glm::vec3(0.014f,  0.184f,  0.576f),
-	glm::vec3(0.771f,  0.328f,  0.970f),
-	glm::vec3(0.406f,  0.615f,  0.116f),
-	glm::vec3(0.676f,  0.977f,  0.133f),
-	glm::vec3(0.971f,  0.572f,  0.833f),
-	glm::vec3(0.140f,  0.616f,  0.489f),
-	glm::vec3(0.997f,  0.513f,  0.064f),
-	glm::vec3(0.945f,  0.719f,  0.592f),
-	glm::vec3(0.543f,  0.021f,  0.978f),
-	glm::vec3(0.279f,  0.317f,  0.505f),
-	glm::vec3(0.167f,  0.620f,  0.077f),
-	glm::vec3(0.347f,  0.857f,  0.137f),
-	glm::vec3(0.055f,  0.953f,  0.042f),
-	glm::vec3(0.714f,  0.505f,  0.345f),
-	glm::vec3(0.783f,  0.290f,  0.734f),
-	glm::vec3(0.722f,  0.645f,  0.174f),
-	glm::vec3(0.302f,  0.455f,  0.848f),
-	glm::vec3(0.225f,  0.587f,  0.040f),
-	glm::vec3(0.517f,  0.713f,  0.338f),
-	glm::vec3(0.053f,  0.959f,  0.120f),
-	glm::vec3(0.393f,  0.621f,  0.362f),
-	glm::vec3(0.673f,  0.211f,  0.457f),
-	glm::vec3(0.820f,  0.883f,  0.371f),
-	glm::vec3(0.982f,  0.099f,  0.879f)
-};
 
 void GameEngine::init() {
     if (!glfwInit()) {
@@ -144,17 +66,7 @@ void GameEngine::loop() {
     VertexArray vao;
     vao.bindVertexArray();
 
-    Buffer<glm::vec3> cubeVertexBuffer;
-    Buffer<glm::vec3> cubeColorBuffer;
-
-    cubeVertexBuffer.bufferData(cubeVertexData);
-    cubeColorBuffer.bufferData(cubeColorData);
-
     // Camera stuff
-    FreecamController cameraController(glm::vec3(4, 5, 0));
-
-    const int myFramebufferWidth = 1920;
-    const int myFramebufferHeight = 1080;
 
     // Object shader
     auto objectShader = loadVertexFragmentShader("./shader/object/");
@@ -167,9 +79,8 @@ void GameEngine::loop() {
     auto gameScene = std::make_shared<GameScene>("My Scene");
     sceneExplorer.setScene(gameScene);
 
-    Viewport      sceneEditor(1920, 1080, "Scene Editor");
-    sceneEditor.setClearColor(glm::vec3(.25f, .5f, .75f));
-
+    SceneEditor sceneEditor;
+    sceneEditor.setScene(gameScene);
 
     double lastFrameStartTime = glfwGetTime();
     float aspectRatio;
@@ -188,19 +99,6 @@ void GameEngine::loop() {
         if (windowWidth != 0 && windowHeight != 0) {
             aspectRatio = (float)windowWidth / (float)windowHeight;
         }
-        
-        // 3D Math stuff...
-        glm::mat4 viewMatrix = cameraController.getViewMatrix();
-        glm::mat4 projectionMatrix = glm::perspective(glm::radians(60.0f), (float)myFramebufferWidth / (float)myFramebufferHeight, 0.1f, 10000.0f);
-
-        glm::mat4 viewProjection = projectionMatrix * viewMatrix;
-        
-        // Camera controller logic
-        cameraController.step(window, deltaTime);
-
-        sceneEditor.setupRender();
-            gameScene->sceneEditorRender(viewProjection);
-        sceneEditor.endRender();
 
         // Drawing code
         ImGui_ImplOpenGL3_NewFrame();
@@ -210,7 +108,7 @@ void GameEngine::loop() {
         // Dockspace
         ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
 
-        ImGuiWindowFlags extraFlags = cameraController.isMouseLocked ? ImGuiWindowFlags_NoInputs : 0;
+        ImGuiWindowFlags extraFlags = sceneEditor.getCameraController().isMouseLocked ? ImGuiWindowFlags_NoInputs : 0;
 
         // Draw my game engine windows
         mainMenuBar.render();
@@ -218,7 +116,7 @@ void GameEngine::loop() {
         assetExplorer.render(extraFlags);
         sceneExplorer.render(extraFlags);
 
-        sceneEditor.renderWindow(extraFlags);
+        sceneEditor.render(extraFlags, window, deltaTime);
 
         ImGui::ShowDemoWindow();
         

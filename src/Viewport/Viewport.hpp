@@ -2,12 +2,11 @@
 
 #include <glm/glm.hpp>
 
-#include "glad/glad.h"
 #include "imgui/imgui.h"
+#include "glad/glad.h"
 
 #include <cstdint>
 #include <string>
-
 
 class Viewport {
 private:
@@ -33,4 +32,6 @@ public:
     void endRender();
 
     void renderWindow(ImGuiWindowFlags extraFlags);
+
+    glm::vec2 getSize() const;
 };

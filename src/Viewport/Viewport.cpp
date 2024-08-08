@@ -75,3 +75,7 @@ void Viewport::renderWindow(ImGuiWindowFlags extraFlags) {
         }
     ImGui::End();
 }
+
+glm::vec2 Viewport::getSize() const {
+    return glm::vec2(width, height);
+}

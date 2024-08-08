@@ -1,12 +1,11 @@
 #include "Viewport/Viewport.hpp"
 
-#include "imgui/imgui.h"
-
 #include <iostream>
 
-Viewport::Viewport(std::size_t _width, std::size_t _height):
+Viewport::Viewport(std::size_t _width, std::size_t _height, std::string _viewportName):
     width(_width),
-    height(_height)
+    height(_height),
+    viewportName(_viewportName)
 {
     glGenFramebuffers(1, &framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -56,8 +55,8 @@ void Viewport::endRender() {
 
 }
 
-void Viewport::renderWindow() {
-    ImGui::Begin("Camera");
+void Viewport::renderWindow(ImGuiWindowFlags extraFlags) {
+    ImGui::Begin("Camera", nullptr, extraFlags);
         ImVec2 viewportSize = ImGui::GetContentRegionAvail();
 
         float imageAspectRatio = (float)width / (float)height;

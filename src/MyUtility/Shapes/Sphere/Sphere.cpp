@@ -70,7 +70,7 @@ void Sphere::startRender(std::unique_ptr<RenderInfo>& info) {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 }
 
-void Sphere::render(std::unique_ptr<RenderInfo>& info, glm::mat4 viewProj, glm::mat4 modelMatrix, std::unique_ptr<Sphere>& sphere) {
+void Sphere::render(std::unique_ptr<RenderInfo>& info, glm::mat4 viewProj, glm::mat4 modelMatrix, std::shared_ptr<Sphere>& sphere) {
     glm::mat4 MVP = viewProj * modelMatrix;
 
     glUniformMatrix4fv(info->uniforms.mvp, 1, GL_FALSE, &MVP[0][0]);
@@ -119,6 +119,10 @@ btRigidBody* Sphere::getRigidbody() {
 
 btCollisionShape* Sphere::getCollisionShape() {
     return shape;
+}
+
+Shape::ModelType Sphere::getObjectType() {
+    return Shape::ModelType::Sphere;
 }
 
 float Sphere::getRadius() {

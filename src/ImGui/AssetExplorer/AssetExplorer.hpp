@@ -2,6 +2,8 @@
 
 #include "Utility/GL/Texture/Texture.hpp"
 
+#include "imgui/imgui.h"
+
 #include <filesystem>
 
 namespace fs = std::filesystem;
@@ -18,5 +20,5 @@ public:
     AssetExplorer();
     ~AssetExplorer();
 
-    void render();
+    void render(ImGuiWindowFlags extraWindowFlags);
 };

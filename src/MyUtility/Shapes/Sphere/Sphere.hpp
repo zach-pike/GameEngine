@@ -30,7 +30,7 @@ public:
     static void cleanupRender(std::unique_ptr<RenderInfo>&);
 
     static void startRender(std::unique_ptr<RenderInfo>&);
-    static void render(std::unique_ptr<RenderInfo>&, glm::mat4 viewProj, glm::mat4 modelMatrix, std::unique_ptr<Sphere>&);
+    static void render(std::unique_ptr<RenderInfo>&, glm::mat4 viewProj, glm::mat4 modelMatrix, std::shared_ptr<Sphere>&);
     static void endRender(std::unique_ptr<RenderInfo>&);
 private:
     btDiscreteDynamicsWorld* world;
@@ -47,6 +47,7 @@ public:
 
     btRigidBody* getRigidbody();
     btCollisionShape* getCollisionShape();
+    Shape::ModelType getObjectType();
 
     float getRadius();
 };

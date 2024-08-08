@@ -1,6 +1,6 @@
 #include "AssetExplorer.hpp"
 
-#include "imgui/imgui.h"
+
 
 #include <iostream>
 
@@ -15,8 +15,8 @@ AssetExplorer::~AssetExplorer() {
 
 }
 
-void AssetExplorer::render() {
-    ImGui::Begin("Asset Explorer");
+void AssetExplorer::render(ImGuiWindowFlags extraWindowFlags) {
+    ImGui::Begin("Asset Explorer", nullptr, extraWindowFlags);
         std::string path = currentPath.string();
 
         ImGui::Text(path.c_str());
@@ -39,7 +39,11 @@ void AssetExplorer::render() {
             ImGui::Text("..");
 
             ImGui::TableNextColumn();
+            ImGui::TextDisabled("--");
+
             ImGui::TableNextColumn();
+            ImGui::TextDisabled("--");
+
             ImGui::TableNextColumn();
             if (ImGui::Button("Navigate")) {
                 currentPath = currentPath.parent_path();
@@ -60,9 +64,10 @@ void AssetExplorer::render() {
                     ImGui::Text(name.c_str());
 
                     ImGui::TableNextColumn();
-                    ImGui::TableNextColumn();
+                    ImGui::TextDisabled("--");
 
-                    ImGui::Text("N/a");
+                    ImGui::TableNextColumn();
+                    ImGui::TextDisabled("--");
 
                     ImGui::TableNextColumn();
                     ImGui::PushID(key);

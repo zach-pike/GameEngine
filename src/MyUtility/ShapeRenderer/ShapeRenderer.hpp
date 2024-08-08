@@ -12,7 +12,7 @@ class ShapeRenderer {
 private:
     std::unique_ptr<typename T::RenderInfo> renderInfo;
 public:
-    std::vector<std::unique_ptr<T>> shapes;
+    std::vector<std::shared_ptr<T>> shapes;
 
     ShapeRenderer() {
         renderInfo = T::setupRender();

@@ -125,7 +125,7 @@ void Cube::startRender(std::unique_ptr<RenderInfo>& info) {
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 }
 
-void Cube::render(std::unique_ptr<RenderInfo>& info, glm::mat4 viewProj, glm::mat4 modelMatrix, std::unique_ptr<Cube>& cube) {
+void Cube::render(std::unique_ptr<RenderInfo>& info, glm::mat4 viewProj, glm::mat4 modelMatrix, std::shared_ptr<Cube>& cube) {
     auto size = cube->getSize();
     modelMatrix = glm::scale(modelMatrix, glm::vec3(size.x(), size.y(), size.z()));
 
@@ -182,6 +182,10 @@ btRigidBody* Cube::getRigidbody() {
 
 btCollisionShape* Cube::getCollisionShape() {
 	return shape;
+}
+
+Shape::ModelType Cube::getObjectType() {
+	return Shape::ModelType::Cube;
 }
 
 btVector3 Cube::getSize() {

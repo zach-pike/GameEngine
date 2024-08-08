@@ -19,7 +19,10 @@
 
 #include "ImGui/AssetExplorer/AssetExplorer.hpp"
 #include "ImGui/MainMenuBar/MainMenuBar.hpp"
+#include "ImGui/SceneExplorer/SceneExplorer.hpp"
+
 #include "Viewport/Viewport.hpp"
+#include "GameScene/GameScene.hpp"
 
 #include <iostream>
 #include <exception>
@@ -157,22 +160,15 @@ void GameEngine::loop() {
     auto objectShader = loadVertexFragmentShader("./shader/object/");
     GLuint objectViewProjectionUniform = objectShader->getUniformLocation("viewProjection");
 
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-
-    objectShader->use();
-
-    // Setup vertex attributes
-    glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBuffer.getBufferId());
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-
-    glBindBuffer(GL_ARRAY_BUFFER, cubeColorBuffer.getBufferId());
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-
     MainMenuBar   mainMenuBar;
     AssetExplorer assetExplorer;
-    Viewport      viewport(1920, 1080);
-    viewport.setClearColor(glm::vec3(.25f, .5f, .75f));
+    SceneExplorer sceneExplorer;
+
+    auto gameScene = std::make_shared<GameScene>("My Scene");
+    sceneExplorer.setScene(gameScene);
+
+    Viewport      sceneEditor(1920, 1080, "Scene Editor");
+    sceneEditor.setClearColor(glm::vec3(.25f, .5f, .75f));
 
 
     double lastFrameStartTime = glfwGetTime();
@@ -195,20 +191,16 @@ void GameEngine::loop() {
         
         // 3D Math stuff...
         glm::mat4 viewMatrix = cameraController.getViewMatrix();
-        glm::mat4 projectionMatrix = glm::perspective(glm::radians(60.0f), (float)myFramebufferWidth / (float)myFramebufferHeight, 0.1f, 100.0f);
+        glm::mat4 projectionMatrix = glm::perspective(glm::radians(60.0f), (float)myFramebufferWidth / (float)myFramebufferHeight, 0.1f, 10000.0f);
 
         glm::mat4 viewProjection = projectionMatrix * viewMatrix;
         
         // Camera controller logic
         cameraController.step(window, deltaTime);
 
-        viewport.setupRender();
-
-            // Draw cube into texture
-            glUniformMatrix4fv(objectViewProjectionUniform, 1, GL_FALSE, &viewProjection[0][0]);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        viewport.endRender();
+        sceneEditor.setupRender();
+            gameScene->sceneEditorRender(viewProjection);
+        sceneEditor.endRender();
 
         // Drawing code
         ImGui_ImplOpenGL3_NewFrame();
@@ -218,12 +210,17 @@ void GameEngine::loop() {
         // Dockspace
         ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
 
-        ImGui::ShowDemoWindow();
+        ImGuiWindowFlags extraFlags = cameraController.isMouseLocked ? ImGuiWindowFlags_NoInputs : 0;
 
         // Draw my game engine windows
-        assetExplorer.render();
         mainMenuBar.render();
-        viewport.renderWindow();
+
+        assetExplorer.render(extraFlags);
+        sceneExplorer.render(extraFlags);
+
+        sceneEditor.renderWindow(extraFlags);
+
+        ImGui::ShowDemoWindow();
         
         // Render ImGui stuff
         glBindFramebuffer(GL_FRAMEBUFFER, 0);

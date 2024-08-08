@@ -15,6 +15,7 @@ void Texture::loadFromFilePath(std::string path) {
     int width, height, channels;
 	std::uint8_t* img = stbi_load(path.c_str(), &width, &height, nullptr, STBI_rgb_alpha);
 
+    size = glm::vec2(width, height);
     uploadTexture2DFromBuffer(img, width, height, GL_RGBA, GL_UNSIGNED_BYTE);
 
     stbi_image_free(img);
@@ -26,6 +27,10 @@ void Texture::uploadTexture2DFromBuffer(const void* data, std::size_t width, std
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
+}
+
+glm::vec2 Texture::getSize() {
+    return size;
 }
 
 GLuint Texture::getTextureId() {

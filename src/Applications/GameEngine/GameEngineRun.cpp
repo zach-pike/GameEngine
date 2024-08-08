@@ -117,6 +117,7 @@ void GameEngine::init() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -138,19 +139,64 @@ void GameEngine::loop() {
     VertexArray vao;
     vao.bindVertexArray();
 
-    // Simple buffer
-    Buffer<glm::vec3> vertexBuffer;
-    Buffer<glm::vec3> colorBuffer;
+    Buffer<glm::vec3> cubeVertexBuffer;
+    Buffer<glm::vec3> cubeColorBuffer;
 
-    vertexBuffer.bufferData(cubeVertexData);
-    colorBuffer.bufferData(cubeColorData);
+    cubeVertexBuffer.bufferData(cubeVertexData);
+    cubeColorBuffer.bufferData(cubeColorData);
 
     // Camera stuff
     FreecamController cameraController(glm::vec3(4, 5, 0));
 
+    const int myFramebufferWidth = 1920;
+    const int myFramebufferHeight = 1080;
+
+    // Render framebuffer
+    GLuint myFramebuffer;
+    glGenFramebuffers(1, &myFramebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, myFramebuffer);
+
+    GLuint myFramebufferDepthStencil;
+    glGenRenderbuffers(1, &myFramebufferDepthStencil);
+    glBindRenderbuffer(GL_RENDERBUFFER, myFramebufferDepthStencil);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, myFramebufferWidth, myFramebufferHeight);
+
+    GLuint myFramebufferTexture;
+    glGenTextures(1, &myFramebufferTexture);
+    glBindTexture(GL_TEXTURE_2D, myFramebufferTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, myFramebufferWidth, myFramebufferHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
+    // Use location=0 in fragment shader
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, myFramebufferTexture, 0);
+
+    // Attach depth buffer
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, myFramebufferDepthStencil);
+
+    GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
+	glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
+
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        std::cout << "Bad framebuffer state!\n";
+        std::exit(1);
+    }
+
     // Object shader
     auto objectShader = loadVertexFragmentShader("./shader/object/");
     GLuint objectViewProjectionUniform = objectShader->getUniformLocation("viewProjection");
+
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+
+    objectShader->use();
+
+    // Setup vertex attributes
+    glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBuffer.getBufferId());
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    glBindBuffer(GL_ARRAY_BUFFER, cubeColorBuffer.getBufferId());
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
     double lastFrameStartTime = glfwGetTime();
     float aspectRatio;
@@ -172,36 +218,71 @@ void GameEngine::loop() {
         
         // 3D Math stuff...
         glm::mat4 viewMatrix = cameraController.getViewMatrix();
-        glm::mat4 projectionMatrix = glm::perspective(glm::radians(60.0f), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
+        glm::mat4 projectionMatrix = glm::perspective(glm::radians(60.0f), (float)myFramebufferWidth / (float)myFramebufferHeight, 0.1f, 100.0f);
 
         glm::mat4 viewProjection = projectionMatrix * viewMatrix;
         
         // Camera controller logic
         cameraController.step(window, deltaTime);
 
+        // Setup custom framebuffer
+        glBindFramebuffer(GL_FRAMEBUFFER, myFramebuffer);
+        glViewport(0, 0, myFramebufferWidth, myFramebufferHeight);
+        glClearColor(.25f, .5f, .75f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Draw cube into texture
+        glUniformMatrix4fv(objectViewProjectionUniform, 1, GL_FALSE, &viewProjection[0][0]);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glViewport(0, 0, windowWidth, windowHeight);
+        glClearColor(.25f, .5f, .75f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         // Drawing code
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::ShowDemoWindow();
+        ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
 
-        objectShader->use();
-        glUniformMatrix4fv(objectViewProjectionUniform, 1, GL_FALSE, &viewProjection[0][0]);
+        // ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        ImGui::Begin("Test");
+            ImVec2 viewportSize = ImGui::GetContentRegionAvail();
 
-		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.getBufferId());
-        glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+            float imageAspectRatio = (float)myFramebufferWidth / (float)myFramebufferHeight;
+            float contentRegionAspectRatio = viewportSize.x / viewportSize.y;
 
-		glBindBuffer(GL_ARRAY_BUFFER, colorBuffer.getBufferId());
-        glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+            if (contentRegionAspectRatio > imageAspectRatio) {
+                float imageWidth = viewportSize.y * imageAspectRatio;
+                float xPadding = (viewportSize.x - imageWidth) / 2;
+                ImGui::SetCursorPosX(ImGui::GetCursorPosX() + xPadding);
+                ImGui::Image((ImTextureID)(intptr_t)myFramebufferTexture, ImVec2(imageWidth, viewportSize.y), ImVec2(0, 1), ImVec2(1, 0));
+            } else {
+                float imageHeight = viewportSize.x / imageAspectRatio;
+                float yPadding = (viewportSize.y - imageHeight) / 2;
+                ImGui::SetCursorPosY(ImGui::GetCursorPosY() + yPadding);
+                ImGui::Image((ImTextureID)(intptr_t)myFramebufferTexture, ImVec2(viewportSize.x, imageHeight), ImVec2(0, 1), ImVec2(1, 0));
+            }
+        ImGui::End();
 
-        // Render objects
-        glDrawArrays(GL_TRIANGLES, 0, vertexBuffer.size());
+        // objectShader->use();
+        // glUniformMatrix4fv(objectViewProjectionUniform, 1, GL_FALSE, &viewProjection[0][0]);
 
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
+		// glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.getBufferId());
+        // glEnableVertexAttribArray(0);
+		// glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+		// glBindBuffer(GL_ARRAY_BUFFER, colorBuffer.getBufferId());
+        // glEnableVertexAttribArray(1);
+		// glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+        // // Render objects
+        // glDrawArrays(GL_TRIANGLES, 0, vertexBuffer.size());
+
+        // glDisableVertexAttribArray(0);
+        // glDisableVertexAttribArray(1);
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

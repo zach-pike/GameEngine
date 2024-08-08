@@ -4,7 +4,7 @@
 #include <functional>
 #include <iostream>
 
-#include "CameraControllers/FreecamController/CameraProgram/CameraProgram.hpp"
+#include "MyUtility/CameraControllers/FreecamController/CameraProgram/CameraProgram.hpp"
 #include "Utility/GL/Buffer/Buffer.hpp"
 #include "Utility/GL/ShaderProgram/ShaderProgram.hpp"
 

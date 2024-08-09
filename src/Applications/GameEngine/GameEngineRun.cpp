@@ -73,19 +73,25 @@ void GameEngine::loop() {
     auto objectShader = loadVertexFragmentShader("./shader/object/");
     GLuint objectViewProjectionUniform = objectShader->getUniformLocation("viewProjection");
 
-    MainMenuBar   mainMenuBar;
     AssetExplorer assetExplorer;
     SceneExplorer sceneExplorer;
     Logger        logger;
+    SceneEditor   sceneEditor;
+
+    MainMenuBar   mainMenuBar;
+    mainMenuBar.controls.assetExplorerOpen = &assetExplorer.open;
+    mainMenuBar.controls.sceneExplorerOpen = &sceneExplorer.open;
+    mainMenuBar.controls.loggerOpen        = &logger.open;
+    mainMenuBar.controls.sceneEditorOpen   = &sceneEditor.open;
 
     logger.logInfo("Hello world!");
     logger.logInfo("Hello world 2!");
 
     auto gameScene = std::make_shared<GameScene>("My Scene");
-    sceneExplorer.setScene(gameScene);
 
-    SceneEditor sceneEditor;
+    sceneExplorer.setScene(gameScene);
     sceneEditor.setScene(gameScene);
+
 
     double lastFrameStartTime = glfwGetTime();
     float aspectRatio;
@@ -120,10 +126,11 @@ void GameEngine::loop() {
 
         assetExplorer.render(extraFlags);
         sceneExplorer.render(extraFlags);
-        sceneEditor.render(extraFlags, window, deltaTime);
         logger.render(extraFlags);
 
-        ImGui::ShowDemoWindow();
+        sceneEditor.render(extraFlags, window, deltaTime);
+        
+        // ImGui::ShowDemoWindow();
         
         // Render ImGui stuff
         glBindFramebuffer(GL_FRAMEBUFFER, 0);

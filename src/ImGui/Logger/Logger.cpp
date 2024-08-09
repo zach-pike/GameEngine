@@ -9,6 +9,8 @@ const char* Logger::getLoggerSeverityString(LoggerSeverity sev) {
         case LoggerSeverity::WARN: return "Warn";
         case LoggerSeverity::ERROR: return "Error";
     }
+
+    return "Info";
 }
 
 Logger::Logger() {
@@ -48,7 +50,8 @@ void Logger::logError(std::string message) {
 }
 
 void Logger::render(ImGuiWindowFlags extraFlags) {
-    ImGui::Begin("Logger", nullptr, extraFlags);
+    if (!open) return;
+    ImGui::Begin("Logger", &open, extraFlags);
 
     if (ImGui::BeginTable("logger", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable)) {
         ImGui::TableSetupColumn("Time");

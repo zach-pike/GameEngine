@@ -13,7 +13,8 @@ void SceneExplorer::setScene(std::shared_ptr<GameScene> scene) {
 }
 
 void SceneExplorer::render(ImGuiWindowFlags extraFlags) {
-    ImGui::Begin("Scene Explorer", nullptr, extraFlags);
+    if (!open) return;
+    ImGui::Begin("Scene Explorer", &open, extraFlags);
 
         if (currentScene == nullptr) {
             ImGui::Text("No Scene selected");

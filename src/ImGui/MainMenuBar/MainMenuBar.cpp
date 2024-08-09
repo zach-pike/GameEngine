@@ -13,6 +13,15 @@ void MainMenuBar::render() {
             ImGui::EndMenu();
         }
 
+        if (ImGui::BeginMenu("View")) {
+            ImGui::MenuItem("Scene explorer", nullptr, controls.sceneExplorerOpen);
+            ImGui::MenuItem("Asset explorer", nullptr, controls.assetExplorerOpen);
+            ImGui::MenuItem("Logger", nullptr, controls.loggerOpen);
+            ImGui::MenuItem("Scene Editor", nullptr, controls.sceneEditorOpen);
+            
+            ImGui::EndMenu();
+        }
+
         ImGui::EndMainMenuBar();
     }
 }

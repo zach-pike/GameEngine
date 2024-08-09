@@ -16,7 +16,9 @@ AssetExplorer::~AssetExplorer() {
 }
 
 void AssetExplorer::render(ImGuiWindowFlags extraWindowFlags) {
-    ImGui::Begin("Asset Explorer", nullptr, extraWindowFlags);
+    if (!open) return;
+    
+    ImGui::Begin("Asset Explorer", &open, extraWindowFlags);
         std::string path = currentPath.string();
 
         ImGui::Text(path.c_str());

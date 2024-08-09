@@ -14,9 +14,9 @@ private:
     Texture fileTexture;
 
     fs::path currentPath;
-
-
 public:
+    bool open = true;
+
     AssetExplorer();
     ~AssetExplorer();
 

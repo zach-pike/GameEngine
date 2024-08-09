@@ -12,6 +12,8 @@
 struct GLFWwindow;
 
 class SceneEditor : public Viewport {
+public:
+    bool open = true;
 private:
     std::shared_ptr<GameScene> scene;
 

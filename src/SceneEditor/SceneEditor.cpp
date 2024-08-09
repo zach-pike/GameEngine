@@ -18,6 +18,7 @@ const FreecamController& SceneEditor::getCameraController() {
 }
 
 void SceneEditor::render(ImGuiWindowFlags extraFlags, GLFWwindow* window, float deltaTime) {
+    if (!open) return;
     // 3D Math stuff...
     glm::mat4 viewMatrix = cameraController.getViewMatrix();
     glm::vec2 framebufferSize = Viewport::getSize();

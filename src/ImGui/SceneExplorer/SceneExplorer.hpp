@@ -6,6 +6,8 @@
 #include "GameScene/GameScene.hpp"
 
 class SceneExplorer {
+public:
+    bool open = true;
 private:
     std::shared_ptr<GameScene> currentScene;
 public:

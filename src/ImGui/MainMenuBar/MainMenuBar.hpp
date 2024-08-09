@@ -1,8 +1,13 @@
 #pragma once
 
 class MainMenuBar {
-private:
+public:
+    struct ViewControls {
+        bool *sceneExplorerOpen, *assetExplorerOpen, *loggerOpen, *sceneEditorOpen;
+    };
 
+    ViewControls controls;
+private:
 public:
     MainMenuBar();
     ~MainMenuBar();

@@ -21,6 +21,8 @@ public:
         LoggerSeverity                        severity;
         std::string                           loggerMessage;
     };
+
+    bool open = true;
 private:
     std::deque<LoggerMessage> logs;
 

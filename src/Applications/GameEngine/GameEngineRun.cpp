@@ -20,7 +20,7 @@
 #include "ImGui/AssetExplorer/AssetExplorer.hpp"
 #include "ImGui/MainMenuBar/MainMenuBar.hpp"
 #include "ImGui/SceneExplorer/SceneExplorer.hpp"
-#include "ImGui/Logger/Logger.hpp"
+#include "ImGui/LoggerWindow/LoggerWindow.hpp"
 
 #include "SceneEditor/SceneEditor.hpp"
 #include "Scene/Scene.hpp"
@@ -73,14 +73,14 @@ void GameEngine::loop() {
     // VAO
     VertexArray vao;
     vao.bindVertexArray();
-
-    // Camera stuff
-
-    // Object shader
-    auto objectShader = loadVertexFragmentShader("./shader/object/");
-    GLuint objectViewProjectionUniform = objectShader->getUniformLocation("viewProjection");
     
-    Logger        logger;
+    std::shared_ptr<LoggerWindow> logger = std::make_shared<LoggerWindow>();
+
+    LoggerProfile myProfile(logger, "MyLogger");
+    myProfile.logInfo("AAAAAh");
+    myProfile.logInfo("AAAAAh");
+    myProfile.logInfo("AAAAAh");
+    myProfile.logInfo("AAAAAh");
 
     AssetExplorer assetExplorer;
 
@@ -91,16 +91,13 @@ void GameEngine::loop() {
     MainMenuBar   mainMenuBar;
     mainMenuBar.controls.assetExplorerOpen = &assetExplorer.open;
     mainMenuBar.controls.sceneExplorerOpen = &sceneExplorer.open;
-    mainMenuBar.controls.loggerOpen        = &logger.open;
+    mainMenuBar.controls.loggerOpen        = &logger->open;
     mainMenuBar.controls.sceneEditorOpen   = &sceneEditor.open;
 
-    logger.logInfo("Hello world!");
-    logger.logInfo("Hello world 2!");
+    auto scene = std::make_shared<Scene>("My Scene");
 
-    auto Scene = std::make_shared<Scene>("My Scene");
-
-    sceneExplorer.setScene(Scene);
-    sceneEditor.setScene(Scene);
+    sceneExplorer.setScene(scene);
+    sceneEditor.setScene(scene);
 
     double lastFrameStartTime = glfwGetTime();
     float aspectRatio;
@@ -135,7 +132,7 @@ void GameEngine::loop() {
 
         assetExplorer.render(extraFlags);
         sceneExplorer.render(extraFlags, selectedObject);
-        logger.render(extraFlags);
+        logger->render(extraFlags);
 
         sceneEditor.render(extraFlags, window, deltaTime, selectedObject);
         

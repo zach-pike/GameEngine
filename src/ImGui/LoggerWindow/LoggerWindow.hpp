@@ -2,11 +2,13 @@
 
 #include "imgui/imgui.h"
 
+#include "LoggerProfile/LoggerProfile.hpp"
+
 #include <chrono>
 #include <deque>
 #include <string>
 
-class Logger {
+class LoggerWindow {
 public:
     enum class LoggerSeverity {
         INFO,
@@ -17,6 +19,8 @@ public:
     static const char* getLoggerSeverityString(LoggerSeverity sev);
 
     struct LoggerMessage {
+        const LoggerProfile& profile;
+
         std::chrono::system_clock::time_point timePoint;
         LoggerSeverity                        severity;
         std::string                           loggerMessage;
@@ -26,14 +30,10 @@ public:
 private:
     std::deque<LoggerMessage> logs;
 
-    void addLog(LoggerMessage message);
 public:
-    Logger();
-    ~Logger();
-
-    void logInfo(std::string message);
-    void logWarn(std::string message);
-    void logError(std::string message);
+    LoggerWindow();
+    ~LoggerWindow();
 
     void render(ImGuiWindowFlags extraFlags);
+    void addLog(LoggerMessage message);
 };

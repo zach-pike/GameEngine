@@ -13,7 +13,7 @@
 
 #include "MyUtility/ShapeRenderer/ShapeRenderer.hpp"
 
-class GameScene {
+class Scene {
 private:
     struct ModelRenderingInfo {
         std::unique_ptr<Cube::RenderInfo> cubeRenderInfo;
@@ -32,8 +32,8 @@ private:
 
     std::string sceneName;
 public:
-    GameScene(std::string sceneName);
-    ~GameScene();
+    Scene(std::string sceneName);
+    ~Scene();
 
     btDiscreteDynamicsWorld* getPhysicsWorld();
 

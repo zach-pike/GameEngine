@@ -84,6 +84,6 @@ void SceneEditor::render(ImGuiWindowFlags extraFlags, GLFWwindow* window, float 
     }
 }
 
-void SceneEditor::setScene(std::shared_ptr<GameScene> _scene) {
+void SceneEditor::setScene(std::shared_ptr<Scene> _scene) {
     scene = _scene;
 }

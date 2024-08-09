@@ -8,7 +8,7 @@ SceneExplorer::~SceneExplorer() {
 
 }
 
-void SceneExplorer::setScene(std::shared_ptr<GameScene> scene) {
+void SceneExplorer::setScene(std::shared_ptr<Scene> scene) {
     currentScene = scene;
 }
 

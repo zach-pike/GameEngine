@@ -1,8 +1,8 @@
-#include "GameScene.hpp"
+#include "Scene.hpp"
 
 #include <iostream>
 
-GameScene::GameScene(std::string _sceneName):
+Scene::Scene(std::string _sceneName):
     sceneName(_sceneName)
 {
     collisionConfiguration = new btDefaultCollisionConfiguration();
@@ -23,7 +23,7 @@ GameScene::GameScene(std::string _sceneName):
     objects.push_back(std::make_unique<Cube>(dynamicsWorld, btVector3(5, 5, 5), 0, btVector3(0,30, 0)));
 }
 
-GameScene::~GameScene() {
+Scene::~Scene() {
     Cube::cleanupRender(renderInfo.cubeRenderInfo);
     Sphere::cleanupRender(renderInfo.sphereRenderInfo);
 
@@ -36,7 +36,7 @@ GameScene::~GameScene() {
     delete collisionConfiguration;
 }
 
-void GameScene::sceneEditorRender(glm::mat4 viewProjection) {
+void Scene::sceneEditorRender(glm::mat4 viewProjection) {
     for (int j=0; j<Shape::NTypes; j++) {
         switch((Shape::ModelType)j) {
             case Shape::ModelType::Sphere: Sphere::startRender(renderInfo.sphereRenderInfo); break;
@@ -75,14 +75,14 @@ void GameScene::sceneEditorRender(glm::mat4 viewProjection) {
     }   
 }
 
-btDiscreteDynamicsWorld* GameScene::getPhysicsWorld() {
+btDiscreteDynamicsWorld* Scene::getPhysicsWorld() {
     return dynamicsWorld;
 }
 
-std::string GameScene::getSceneName() const {
+std::string Scene::getSceneName() const {
     return sceneName;
 }
 
-std::vector<std::shared_ptr<Shape>>& GameScene::getObjects() {
+std::vector<std::shared_ptr<Shape>>& Scene::getObjects() {
     return objects;
 }

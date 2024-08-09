@@ -23,7 +23,9 @@
 #include "ImGui/Logger/Logger.hpp"
 
 #include "SceneEditor/SceneEditor.hpp"
-#include "GameScene/GameScene.hpp"
+#include "Scene/Scene.hpp"
+
+#include <stb_image.h>
 
 #include <iostream>
 #include <exception>
@@ -35,13 +37,18 @@ void GameEngine::init() {
         std::exit(1);
     }
 
-    window = glfwCreateWindow(1024, 768, "Window", nullptr, nullptr);
+    window = glfwCreateWindow(1200, 800, "Game Engine", nullptr, nullptr);
     glfwMakeContextCurrent(window);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Failed to load OpenGL/GLAD!\n";
         std::exit(1);
     }
+
+    GLFWimage images[1]; 
+    images[0].pixels = stbi_load("resources/icon.png", &images[0].width, &images[0].height, 0, 4); //rgba channels 
+    glfwSetWindowIcon(window, 1, images); 
+    stbi_image_free(images[0].pixels);
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
@@ -72,12 +79,13 @@ void GameEngine::loop() {
     // Object shader
     auto objectShader = loadVertexFragmentShader("./shader/object/");
     GLuint objectViewProjectionUniform = objectShader->getUniformLocation("viewProjection");
+    
+    Logger        logger;
 
     AssetExplorer assetExplorer;
 
     std::shared_ptr<Shape> selectedObject;
     SceneExplorer sceneExplorer;
-    Logger        logger;
     SceneEditor   sceneEditor;
 
     MainMenuBar   mainMenuBar;
@@ -89,11 +97,10 @@ void GameEngine::loop() {
     logger.logInfo("Hello world!");
     logger.logInfo("Hello world 2!");
 
-    auto gameScene = std::make_shared<GameScene>("My Scene");
+    auto Scene = std::make_shared<Scene>("My Scene");
 
-    sceneExplorer.setScene(gameScene);
-    sceneEditor.setScene(gameScene);
-
+    sceneExplorer.setScene(Scene);
+    sceneEditor.setScene(Scene);
 
     double lastFrameStartTime = glfwGetTime();
     float aspectRatio;

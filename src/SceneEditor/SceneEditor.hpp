@@ -6,7 +6,7 @@
 
 #include "MyUtility/CameraControllers/FreecamController/FreecamController.hpp"
 
-#include "GameScene/GameScene.hpp"
+#include "Scene/Scene.hpp"
 #include "Viewport/Viewport.hpp"
 
 #include "imgui/imgui.h"
@@ -17,7 +17,7 @@ class SceneEditor : public Viewport {
 public:
     bool open = true;
 private:
-    std::shared_ptr<GameScene> scene;
+    std::shared_ptr<Scene> scene;
 
     FreecamController cameraController;
 
@@ -34,5 +34,5 @@ public:
     const FreecamController& getCameraController();
     void render(ImGuiWindowFlags extraFlags, GLFWwindow* window, float deltaTime, std::shared_ptr<Shape>& selectedObject);
 
-    void setScene(std::shared_ptr<GameScene>);
+    void setScene(std::shared_ptr<Scene>);
 };

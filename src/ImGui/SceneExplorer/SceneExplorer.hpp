@@ -3,18 +3,18 @@
 #include "imgui/imgui.h"
 
 #include <memory>
-#include "GameScene/GameScene.hpp"
+#include "Scene/Scene.hpp"
 
 class SceneExplorer {
 public:
     bool open = true;
 private:
-    std::shared_ptr<GameScene> currentScene;
+    std::shared_ptr<Scene> currentScene;
 public:
     SceneExplorer();
     ~SceneExplorer();
 
-    void setScene(std::shared_ptr<GameScene>);
+    void setScene(std::shared_ptr<Scene>);
 
     void render(ImGuiWindowFlags extraFlags, std::shared_ptr<Shape>& selectedObject);
 };

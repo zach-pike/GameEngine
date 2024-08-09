@@ -12,7 +12,7 @@ void SceneExplorer::setScene(std::shared_ptr<GameScene> scene) {
     currentScene = scene;
 }
 
-void SceneExplorer::render(ImGuiWindowFlags extraFlags) {
+void SceneExplorer::render(ImGuiWindowFlags extraFlags, std::shared_ptr<Shape>& selectedObject) {
     if (!open) return;
     ImGui::Begin("Scene Explorer", &open, extraFlags);
 
@@ -31,12 +31,21 @@ void SceneExplorer::render(ImGuiWindowFlags extraFlags) {
 
                     ImGui::TableHeadersRow();
 
+                    char indexStr[20];
+
                     auto& objs = currentScene->getObjects();
                     for (int i=0; i<objs.size(); i++) {
                         auto& obj = objs.at(i);
 
+                        bool isSelectedItem = obj == selectedObject;
+
                         ImGui::TableNextColumn();
-                        ImGui::Text("%d", i);
+                        int indexStrSize = sprintf(indexStr, "%d", i);
+                        indexStr[indexStrSize] = '\0';
+
+                        if (ImGui::Selectable(indexStr, isSelectedItem, ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap)) {
+                            selectedObject = obj;
+                        }
 
                         ImGui::TableNextColumn();
                         ImGui::Text("%s", Shape::getModelTypeString(obj->getObjectType()));

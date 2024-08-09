@@ -35,6 +35,8 @@ public:
     GameScene(std::string sceneName);
     ~GameScene();
 
+    btDiscreteDynamicsWorld* getPhysicsWorld();
+
     void sceneEditorRender(glm::mat4 viewProjection);
 
     std::string getSceneName() const;

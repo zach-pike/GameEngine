@@ -16,5 +16,5 @@ public:
 
     void setScene(std::shared_ptr<GameScene>);
 
-    void render(ImGuiWindowFlags extraFlags);
+    void render(ImGuiWindowFlags extraFlags, std::shared_ptr<Shape>& selectedObject);
 };

@@ -74,6 +74,8 @@ void GameEngine::loop() {
     GLuint objectViewProjectionUniform = objectShader->getUniformLocation("viewProjection");
 
     AssetExplorer assetExplorer;
+
+    std::shared_ptr<Shape> selectedObject;
     SceneExplorer sceneExplorer;
     Logger        logger;
     SceneEditor   sceneEditor;
@@ -121,16 +123,16 @@ void GameEngine::loop() {
 
         ImGuiWindowFlags extraFlags = sceneEditor.getCameraController().isMouseLocked ? ImGuiWindowFlags_NoInputs : 0;
 
-        // Draw my game engine windows
+        // // Draw my game engine windows
         mainMenuBar.render();
 
         assetExplorer.render(extraFlags);
-        sceneExplorer.render(extraFlags);
+        sceneExplorer.render(extraFlags, selectedObject);
         logger.render(extraFlags);
 
-        sceneEditor.render(extraFlags, window, deltaTime);
+        sceneEditor.render(extraFlags, window, deltaTime, selectedObject);
         
-        // ImGui::ShowDemoWindow();
+        ImGui::ShowDemoWindow();
         
         // Render ImGui stuff
         glBindFramebuffer(GL_FRAMEBUFFER, 0);

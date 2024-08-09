@@ -19,11 +19,15 @@ GameScene::GameScene(std::string _sceneName):
     renderInfo.cubeRenderInfo   = Cube::setupRender();
 
     objects.push_back(std::make_unique<Cube>(dynamicsWorld, btVector3(1000, 1, 1000), 0, btVector3(0, -10, 0)));
+    objects.push_back(std::make_unique<Cube>(dynamicsWorld, btVector3(100, 30, 100), 0, btVector3(0, 100, 0)));
+    objects.push_back(std::make_unique<Cube>(dynamicsWorld, btVector3(5, 5, 5), 0, btVector3(0,30, 0)));
 }
 
 GameScene::~GameScene() {
     Cube::cleanupRender(renderInfo.cubeRenderInfo);
     Sphere::cleanupRender(renderInfo.sphereRenderInfo);
+
+    objects.clear();
 
     delete dynamicsWorld;
     delete solver;
@@ -69,6 +73,10 @@ void GameScene::sceneEditorRender(glm::mat4 viewProjection) {
             case Shape::ModelType::Cube: Cube::endRender(renderInfo.cubeRenderInfo); break;
         }
     }   
+}
+
+btDiscreteDynamicsWorld* GameScene::getPhysicsWorld() {
+    return dynamicsWorld;
 }
 
 std::string GameScene::getSceneName() const {

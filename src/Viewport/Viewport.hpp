@@ -21,6 +21,10 @@ private:
     GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
 
     std::string viewportName;
+
+    bool imgLeftClicked = false;
+protected:
+    virtual void leftClick(ImVec2 pos, ImVec2 displaySize);
 public:
     Viewport(std::size_t width, std::size_t height, std::string viewportName);
     ~Viewport();

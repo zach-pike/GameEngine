@@ -9,6 +9,8 @@
 #include "GameScene/GameScene.hpp"
 #include "Viewport/Viewport.hpp"
 
+#include "imgui/imgui.h"
+
 struct GLFWwindow;
 
 class SceneEditor : public Viewport {
@@ -18,12 +20,19 @@ private:
     std::shared_ptr<GameScene> scene;
 
     FreecamController cameraController;
+
+    bool leftClickRegistered = false;
+    ImVec2 lastSize, lastPos;
+
+    btCollisionWorld::ClosestRayResultCallback ray;
+protected:
+    void leftClick(ImVec2 pos, ImVec2 size);
 public:
     SceneEditor();
     ~SceneEditor();
 
     const FreecamController& getCameraController();
-    void render(ImGuiWindowFlags extraFlags, GLFWwindow* window, float deltaTime);
+    void render(ImGuiWindowFlags extraFlags, GLFWwindow* window, float deltaTime, std::shared_ptr<Shape>& selectedObject);
 
     void setScene(std::shared_ptr<GameScene>);
 };

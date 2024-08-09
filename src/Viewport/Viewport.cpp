@@ -2,6 +2,10 @@
 
 #include <iostream>
 
+void Viewport::leftClick(ImVec2 pos, ImVec2 displaySize) {
+
+}
+
 Viewport::Viewport(std::size_t _width, std::size_t _height, std::string _viewportName):
     width(_width),
     height(_height),
@@ -59,6 +63,8 @@ void Viewport::renderWindow(ImGuiWindowFlags extraFlags) {
     ImGui::Begin(viewportName.c_str(), nullptr, extraFlags);
         ImVec2 viewportSize = ImGui::GetContentRegionAvail();
 
+        ImVec2 finalImageSize(0, 0);
+
         float imageAspectRatio = (float)width / (float)height;
         float contentRegionAspectRatio = viewportSize.x / viewportSize.y;
 
@@ -66,12 +72,26 @@ void Viewport::renderWindow(ImGuiWindowFlags extraFlags) {
             float imageWidth = viewportSize.y * imageAspectRatio;
             float xPadding = (viewportSize.x - imageWidth) / 2;
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + xPadding);
-            ImGui::Image((ImTextureID)(intptr_t)framebufferTexture, ImVec2(imageWidth, viewportSize.y), ImVec2(0, 1), ImVec2(1, 0));
+            ImGui::ImageButton((ImTextureID)(intptr_t)framebufferTexture, ImVec2(imageWidth, viewportSize.y), ImVec2(0, 1), ImVec2(1, 0));
+            finalImageSize = ImVec2(imageWidth, viewportSize.y);
         } else {
             float imageHeight = viewportSize.x / imageAspectRatio;
             float yPadding = (viewportSize.y - imageHeight) / 2;
             ImGui::SetCursorPosY(ImGui::GetCursorPosY() + yPadding);
-            ImGui::Image((ImTextureID)(intptr_t)framebufferTexture, ImVec2(viewportSize.x, imageHeight), ImVec2(0, 1), ImVec2(1, 0));
+            ImGui::ImageButton((ImTextureID)(intptr_t)framebufferTexture, ImVec2(viewportSize.x, imageHeight), ImVec2(0, 1), ImVec2(1, 0));
+            finalImageSize = ImVec2(viewportSize.x, imageHeight);
+        }
+        
+        if(ImGui::IsItemActive() && ImGui::IsItemHovered()) {
+            unsigned int coordX = (ImGui::GetMousePos().x - ImGui::GetItemRectMin().x);
+            unsigned int coordY = (ImGui::GetMousePos().y - ImGui::GetItemRectMin().y);
+            
+            if (!imgLeftClicked) {
+                leftClick(ImVec2(coordX, coordY), finalImageSize);
+                imgLeftClicked = true;
+            }
+        } else {
+            imgLeftClicked = false;
         }
     ImGui::End();
 }

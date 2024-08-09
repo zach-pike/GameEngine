@@ -31,8 +31,6 @@ private:
     std::vector<std::shared_ptr<Shape>> objects;
 
     std::string sceneName;
-
-
 public:
     GameScene(std::string sceneName);
     ~GameScene();

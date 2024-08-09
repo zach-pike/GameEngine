@@ -6,4 +6,6 @@ const char* Shape::getModelTypeString(ModelType type) {
         case ModelType::Cube: return "Cube";
         case ModelType::Mesh: return "Mesh";
     }
+
+    return "Error";
 }

@@ -56,7 +56,7 @@ void Viewport::endRender() {
 }
 
 void Viewport::renderWindow(ImGuiWindowFlags extraFlags) {
-    ImGui::Begin("Camera", nullptr, extraFlags);
+    ImGui::Begin(viewportName.c_str(), nullptr, extraFlags);
         ImVec2 viewportSize = ImGui::GetContentRegionAvail();
 
         float imageAspectRatio = (float)width / (float)height;

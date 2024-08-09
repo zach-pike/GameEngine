@@ -36,7 +36,6 @@ void SceneEditor::render(ImGuiWindowFlags extraFlags, GLFWwindow* window, float 
     glm::mat4 viewProjection = projectionMatrix * viewMatrix;
         
     // Camera controller logic
-    cameraController.step(window, deltaTime);
 
     if (scene == nullptr) return;
 
@@ -45,6 +44,8 @@ void SceneEditor::render(ImGuiWindowFlags extraFlags, GLFWwindow* window, float 
     Viewport::endRender();
 
     Viewport::renderWindow(extraFlags);
+
+    cameraController.stepGrab(window, deltaTime, this);
 
     if (leftClickRegistered) {
         float x = (2.0f * lastPos.x) / lastSize.x - 1.0f;

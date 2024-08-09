@@ -63,8 +63,6 @@ void Viewport::renderWindow(ImGuiWindowFlags extraFlags) {
     ImGui::Begin(viewportName.c_str(), nullptr, extraFlags);
         ImVec2 viewportSize = ImGui::GetContentRegionAvail();
 
-        ImVec2 finalImageSize(0, 0);
-
         float imageAspectRatio = (float)width / (float)height;
         float contentRegionAspectRatio = viewportSize.x / viewportSize.y;
 
@@ -73,27 +71,41 @@ void Viewport::renderWindow(ImGuiWindowFlags extraFlags) {
             float xPadding = (viewportSize.x - imageWidth) / 2;
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + xPadding);
             ImGui::ImageButton((ImTextureID)(intptr_t)framebufferTexture, ImVec2(imageWidth, viewportSize.y), ImVec2(0, 1), ImVec2(1, 0));
-            finalImageSize = ImVec2(imageWidth, viewportSize.y);
+            lastImageSize = ImVec2(imageWidth, viewportSize.y);
         } else {
             float imageHeight = viewportSize.x / imageAspectRatio;
             float yPadding = (viewportSize.y - imageHeight) / 2;
             ImGui::SetCursorPosY(ImGui::GetCursorPosY() + yPadding);
             ImGui::ImageButton((ImTextureID)(intptr_t)framebufferTexture, ImVec2(viewportSize.x, imageHeight), ImVec2(0, 1), ImVec2(1, 0));
-            finalImageSize = ImVec2(viewportSize.x, imageHeight);
+            lastImageSize = ImVec2(viewportSize.x, imageHeight);
         }
+        frameCorner = ImGui::GetItemRectMin();
+
+        unsigned int coordX = (ImGui::GetMousePos().x - frameCorner.x);
+        unsigned int coordY = (ImGui::GetMousePos().y - frameCorner.y);
+        lastMousePos = ImVec2(coordX, coordY);
         
         if(ImGui::IsItemActive() && ImGui::IsItemHovered()) {
-            unsigned int coordX = (ImGui::GetMousePos().x - ImGui::GetItemRectMin().x);
-            unsigned int coordY = (ImGui::GetMousePos().y - ImGui::GetItemRectMin().y);
-            
             if (!imgLeftClicked) {
-                leftClick(ImVec2(coordX, coordY), finalImageSize);
+                leftClick(ImVec2(coordX, coordY), lastImageSize);
                 imgLeftClicked = true;
             }
         } else {
             imgLeftClicked = false;
         }
     ImGui::End();
+}
+
+ImVec2 Viewport::getMousePos() const {
+    return lastMousePos;
+}
+
+ImVec2 Viewport::getImageSize() const {
+    return lastImageSize;
+}
+
+ImVec2 Viewport::getViewportImageFrameCorner() const {
+    return frameCorner;
 }
 
 glm::vec2 Viewport::getSize() const {

@@ -22,8 +22,10 @@ void SceneExplorer::render(ImGuiWindowFlags extraFlags, std::shared_ptr<Shape>& 
             ImGui::End();
             return;
         }
-    
+
+        ImGui::SetNextItemOpen(true);
         if (ImGui::TreeNode(currentScene->getSceneName().c_str())) {
+            ImGui::SetNextItemOpen(true);
             if (ImGui::TreeNode("Objects")) {
                 if (ImGui::BeginTable("objectList", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable)) {
                     ImGui::TableSetupColumn("#");

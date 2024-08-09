@@ -23,6 +23,9 @@ private:
     std::string viewportName;
 
     bool imgLeftClicked = false;
+
+    ImVec2 lastMousePos, lastImageSize;
+    ImVec2 frameCorner;
 protected:
     virtual void leftClick(ImVec2 pos, ImVec2 displaySize);
 public:
@@ -36,6 +39,11 @@ public:
     void endRender();
 
     void renderWindow(ImGuiWindowFlags extraFlags);
+
+    ImVec2 getMousePos() const;
+    ImVec2 getImageSize() const;
+
+    ImVec2 getViewportImageFrameCorner() const;
 
     glm::vec2 getSize() const;
 };

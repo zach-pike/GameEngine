@@ -128,7 +128,7 @@ void GameEngine::loop() {
         ImGuiWindowFlags extraFlags = sceneEditor.getCameraController().isMouseLocked ? ImGuiWindowFlags_NoInputs : 0;
 
         // // Draw my game engine windows
-        mainMenuBar.render();
+        // mainMenuBar.render();
 
         assetExplorer.render(extraFlags);
         sceneExplorer.render(extraFlags, selectedObject);
